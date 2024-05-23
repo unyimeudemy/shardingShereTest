@@ -1,0 +1,32 @@
+
+dataSources:
+  ds0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: "jdbc:postgresql://localhost:5432/sharding1"
+    username: postgres
+    password: 211999
+  ds1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: "jdbc:postgresql://localhost:5432/sharding2"
+    username: postgres
+    password: 211999
+rules:
+  - !SHARDING
+    tables:
+      order:
+        actualDataNodes: ds${0..1}.order
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: order_id
+        shardingAlgorithmName: database_inline
+    defaultTableStrategy:
+      none:
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds${order_id % 2}
+props:
+  sql-show: false
